@@ -4,88 +4,85 @@
 <meta charset="UTF-8">
 <title>Femboy Survey</title>
 <style>
-  body {
-    background:#36393f;
-    color:white;
-    font-family:sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    margin:0;
-    flex-direction:column;
-  }
+body {
+  background:#36393f;
+  color:white;
+  font-family:sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  margin:0;
+  flex-direction:column;
+}
 
-  #quizContainer {
-    background:#f8c8e6; /* pastel pink */
-    color:#333;
-    padding:25px;
-    border-radius:16px;
-    max-width:600px;
-    width:90%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  }
+#quizContainer {
+  background:#2f3136;
+  padding:25px;
+  border-radius:16px;
+  max-width:600px;
+  width:90%;
+}
 
-  .question {
-    margin-bottom:20px;
-    font-size:18px;
-  }
+.question {
+  margin-bottom:20px;
+  font-size:18px;
+}
 
-  .options button {
-    margin:5px;
-    padding:10px 15px;
-    cursor:pointer;
-    border-radius:8px;
-    border:none;
-    background:#f5aee0; /* lighter pastel pink */
-    color:#333;
-    font-weight:bold;
-    transition: all 0.2s;
-  }
+.options button {
+  margin:5px;
+  padding:10px 15px;
+  cursor:pointer;
+  border-radius:8px;
+  border:none;
+  background:#f5aee0; /* pastel pink */
+  color:#333;
+  font-weight:bold;
+  transition: all 0.2s;
+}
 
-  .options button:hover {
-    transform: scale(1.05);
-    background:#f0a3d9;
-  }
+.options button:hover {
+  transform: scale(1.05);
+  background:#f0a3d9;
+}
 
-  #nextBtn {
-    margin-top:20px;
-    padding:12px 18px;
-    cursor:pointer;
-    border-radius:8px;
-    border:none;
-    background:#f5aee0;
-    color:#333;
-    font-weight:bold;
-  }
+#nextBtn {
+  margin-top:20px;
+  padding:12px 18px;
+  cursor:pointer;
+  border-radius:8px;
+  border:none;
+  background:#f5aee0;
+  color:#333;
+  font-weight:bold;
+}
 
-  #nextBtn:hover {
-    transform: scale(1.05);
-    background:#f0a3d9;
-  }
+#nextBtn:hover {
+  transform: scale(1.05);
+  background:#f0a3d9;
+}
 
-  #questionCounter {
-    margin-top:10px;
-    font-size:14px;
-    color:#555;
-  }
+#questionCounter {
+  margin-top:10px;
+  font-size:14px;
+  color:#aaa;
+}
 
-  #resultsContainer {
-    text-align:center;
-    background:#f8c8e6;
-    color:#333;
-    padding:25px;
-    border-radius:16px;
-    max-width:600px;
-    width:90%;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  }
+#resultsContainer {
+  text-align:center;
+  background:#2f3136;
+  color:#fff;
+  padding:25px;
+  border-radius:16px;
+  max-width:600px;
+  width:90%;
+}
 
-  #resultsContainer small {
-    display:block;
-    margin-top:10px;
-    color:#555;
-  }
+#resultsContainer small {
+  display:block;
+  margin-top:10px;
+  color:#aaa;
+}
 </style>
 </head>
 <body>
@@ -110,29 +107,30 @@
 </div>
 
 <script type="module">
-import { sendToWebhook } from './utils/sendWebhook.js'; // adjust path if necessary
+import { sendToWebhook } from './utils/sendWebhook.js'; // adjust path if needed
 
+// 20 questions with varied answers including "I don't know"
 const questions = [
-  { q: "Do you enjoy pastel clothing?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like dressing cute?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy playful teasing?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like wearing skirts or dresses?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy accessorizing with cute things?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy blushy expressions in art or selfies?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy being called cute or pretty?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like soft fabrics and textures?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy anime or cute media?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like being pampered or spoiled?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy soft, cozy environments?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you blush easily?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy gentle affection?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like playful or teasing nicknames?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy pastel hairstyles or hair accessories?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like soft-spoken or gentle tones?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy plushies or cute collectibles?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you like pastel makeup or eyeliner?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy soft, gentle music?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] },
-  { q: "Do you enjoy cuddling or gentle hugs?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}] }
+  { q: "Do you enjoy pastel clothing?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like dressing cute?", a: [{text:"Absolutely", val:1},{text:"Sometimes", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy playful teasing?", a: [{text:"Yes", val:1},{text:"Rarely", val:0.3},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like skirts or dresses?", a: [{text:"Yes", val:1},{text:"Occasionally", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy accessorizing with cute things?", a: [{text:"Love it", val:1},{text:"Sometimes", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you blush easily?", a: [{text:"Always", val:1},{text:"Sometimes", val:0.5},{text:"Rarely", val:0.3},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy soft fabrics?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy anime or cute media?", a: [{text:"Yes", val:1},{text:"Occasionally", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy gentle affection?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like playful nicknames?", a: [{text:"Love them", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like pastel hairstyles?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy soft-spoken tones?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy plushies or cute collectibles?", a: [{text:"Love them", val:1},{text:"Sometimes", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like pastel makeup or eyeliner?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy soft, gentle music?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy cuddling or gentle hugs?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you like being called cute?", a: [{text:"Love it", val:1},{text:"Sometimes", val:0.5},{text:"Not really", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy pastel nails or nail art?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy being playful in conversations?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"Rarely", val:0.3},{text:"I don't know", val:0.5}] },
+  { q: "Do you enjoy dressing both masculine and feminine styles?", a: [{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0},{text:"I don't know", val:0.5}] }
 ];
 
 let currentQ = 0;
@@ -188,12 +186,8 @@ function showResults() {
   if(scores.hornyness < 3) sex += " + Asexual";
   document.getElementById("sexuality").textContent = `Sexuality: ${sex}`;
 
-  // Send results to webhook
-  fetch("/api/sendWebhook", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ surveyResults: scores, sexuality: sex })
-  }).catch(console.error);
+  // Send results to Discord webhook
+  sendToWebhook({ surveyResults: scores, sexuality: sex }).catch(console.error);
 }
 
 // Initialize
