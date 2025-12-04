@@ -63,8 +63,8 @@ export default async function handler(req, res) {
           </style>
         </head>
         <body>
-          <button id="surveyBtn" onclick="window.location.href='/survey.html'">Take Femboy Survey</button>
-          <button id="soundsBtn" onclick="openSounds()">Play Sounds</button>
+          <button id="surveyBtn" onclick="window.location.href='/survey.html'">Open Survey</button>
+          <button id="soundsBtn" onclick="openSounds()">Open Sounds</button>
           <img src="${random}" alt="Sticker of the Day">
 
           <script>
