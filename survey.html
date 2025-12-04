@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Femboy Survey</title>
+<style>
+body { background:#36393f; color:white; font-family:sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; flex-direction:column; }
+#quizContainer { background:#2f3136; padding:20px; border-radius:12px; max-width:600px; width:90%; }
+.question { margin-bottom:20px; }
+.options button { margin:5px; padding:8px 12px; cursor:pointer; border-radius:6px; border:none; background:#ff99ff; }
+#nextBtn { margin-top:20px; padding:10px 15px; cursor:pointer; border-radius:6px; border:none; background:#ff77ff; }
+</style>
+</head>
+<body>
+
+<div id="quizContainer">
+  <div id="questionText" class="question"></div>
+  <div id="options" class="options"></div>
+  <div id="questionCounter"></div>
+  <button id="nextBtn">Next</button>
+</div>
+
+<div id="resultsContainer" style="display:none; text-align:center;">
+  <h2>Your Femboy Results!</h2>
+  <p id="cuteness"></p>
+  <p id="hornyness"></p>
+  <p id="softness"></p>
+  <p id="fluffiness"></p>
+  <p id="sassiness"></p>
+  <p id="playfulness"></p>
+  <p id="sexuality"></p>
+  <small>Sexuality is most likely going to be incorrect.</small>
+</div>
+
+<script>
+const questions = [];
+for(let i=0;i<20;i++){
+  questions.push({q:`Question ${i+1}`, a:[{text:"Yes", val:1},{text:"Sometimes", val:0.5},{text:"No", val:0}]});
+}
+
+let currentQ = 0;
+let scores = { cuteness:0, hornyness:0, softness:0, fluffiness:0, sassiness:0, playfulness:0 };
+
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const counterDiv = document.getElementById("questionCounter");
+const quizContainer = document.getElementById("quizContainer");
+const resultsContainer = document.getElementById("resultsContainer");
+
+function showQuestion() {
+  const q = questions[currentQ];
+  questionText.textContent = q.q;
+  optionsDiv.innerHTML = "";
+  q.a.forEach((opt, idx) => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+    btn.onclick = () => recordAnswer(idx);
+    optionsDiv.appendChild(btn);
+  });
+  counterDiv.textContent = `Question ${currentQ+1} of ${questions.length}`;
+}
+
+function recordAnswer(optionIdx) {
+  const val = questions[currentQ].a[optionIdx].val;
+  scores.cuteness += val * Math.random();
+  scores.hornyness += val * Math.random();
+  scores.softness += val * Math.random();
+  scores.fluffiness += val * Math.random();
+  scores.sassiness += val * Math.random();
+  scores.playfulness += val * Math.random();
+
+  currentQ++;
+  if(currentQ < questions.length) showQuestion();
+  else showResults();
+}
+
+function showResults() {
+  quizContainer.style.display = "none";
+  resultsContainer.style.display = "block";
+
+  document.getElementById("cuteness").textContent = `Cuteness: ${Math.round(scores.cuteness*5*2)}%`;
+  document.getElementById("hornyness").textContent = `Hornyness: ${Math.round(scores.hornyness*5*2)}%`;
+  document.getElementById("softness").textContent = `Softness: ${Math.round(scores.softness*5*2)}%`;
+  document.getElementById("fluffiness").textContent = `Fluffiness: ${Math.round(scores.fluffiness*5*2)}%`;
+  document.getElementById("sassiness").textContent = `Sassiness: ${Math.round(scores.sassiness*5*2)}%`;
+  document.getElementById("playfulness").textContent = `Playfulness: ${Math.round(scores.playfulness*5*2)}%`;
+
+  const sexualities = ["Straight","Gay","Bisexual","Pansexual","Asexual","Queer","Demisexual"];
+  let sex = sexualities[Math.floor(Math.random()*sexualities.length)];
+  if(scores.hornyness < 3) sex += " + Asexual";
+
+  document.getElementById("sexuality").textContent = `Sexuality: ${sex}`;
+
+  // Send results to webhook
+  fetch("/api/sendWebhook", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ surveyResults: scores, sexuality: sex })
+  }).catch(console.error);
+}
+
+showQuestion();
+</script>
