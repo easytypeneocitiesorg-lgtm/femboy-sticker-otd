@@ -12,13 +12,32 @@ export default async function handler(req, res) {
       .map(x => x.trim())
       .filter(Boolean);
 
+    if (links.length === 0) {
+      res.status(500).send("No stickers available");
+      return;
+    }
+
+    // Pick a random sticker
     const random = links[Math.floor(Math.random() * links.length)];
 
-    // send to webhook
+    // Send to Discord webhook
     await sendToWebhook(random);
 
-    // show the sticker like normal
-    res.status(200).json({ sticker: random });
+    // Return HTML showing the sticker
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Femboy Sticker of the Day</title>
+        </head>
+        <body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#fdf6ff;">
+          <img src="${random}" alt="Sticker of the Day" style="max-width:90%; max-height:90%; border-radius:12px;">
+        </body>
+      </html>
+    `);
+    res.end();
+
   } catch (err) {
     console.error("API ERROR:", err);
     res.status(500).send("Error loading sticker");
