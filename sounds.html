@@ -47,13 +47,13 @@
 <script>
 /* --- Audio files in /audio folder --- */
 const sounds = {
-    rain: new Audio("/audio/rain.mp3"),
-    ocean: new Audio("/audio/ocean.mp3"),
-    fire: new Audio("/audio/fire.mp3"),
-    thunder: new Audio("/audio/thunder.mp3")
+    rain: new Audio("/audio/rain.wav"),
+    ocean: new Audio("/audio/ocean.wav"),
+    fire: new Audio("/audio/fire.wav"),
+    thunder: new Audio("/audio/thunder.wav")
 };
 
-/* make them loop */
+/* loop everything */
 for (let key in sounds) {
     sounds[key].loop = true;
 }
