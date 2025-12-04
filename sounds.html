@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Pastel Noise Maker</title>
+<style>
+    body {
+        background: #ffe6f7;
+        font-family: sans-serif;
+        text-align: center;
+        padding: 40px;
+        color: #333;
+    }
+    h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+    .btn {
+        display: block;
+        width: 220px;
+        margin: 12px auto;
+        padding: 14px;
+        border-radius: 12px;
+        background: #ffbdea;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        transition: 0.25s;
+    }
+    .btn:hover {
+        background: #ffc8ef;
+        transform: scale(1.04);
+    }
+</style>
+</head>
+<body>
+
+<h1>Pastel Noise Maker</h1>
+
+<button class="btn" onclick="toggleSound('rain')">Rain</button>
+<button class="btn" onclick="toggleSound('ocean')">Ocean Waves</button>
+<button class="btn" onclick="toggleSound('fire')">Fireplace</button>
+<button class="btn" onclick="toggleSound('thunder')">Thunder</button>
+
+<button class="btn" onclick="stopAll()">Stop All</button>
+
+<script>
+/* --- Audio files in /audio folder --- */
+const sounds = {
+    rain: new Audio("/audio/rain.mp3"),
+    ocean: new Audio("/audio/ocean.mp3"),
+    fire: new Audio("/audio/fire.mp3"),
+    thunder: new Audio("/audio/thunder.mp3")
+};
+
+/* make them loop */
+for (let key in sounds) {
+    sounds[key].loop = true;
+}
+
+let playing = null;
+
+function toggleSound(name) {
+    if (playing === name) {
+        sounds[name].pause();
+        sounds[name].currentTime = 0;
+        playing = null;
+        return;
+    }
+    stopAll();
+    sounds[name].play();
+    playing = name;
+}
+
+function stopAll() {
+    for (let key in sounds) {
+        sounds[key].pause();
+        sounds[key].currentTime = 0;
+    }
+    playing = null;
+}
+</script>
+
+</body>
+</html>
