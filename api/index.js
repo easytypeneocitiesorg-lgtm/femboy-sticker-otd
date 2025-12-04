@@ -1,11 +1,18 @@
 import { readFileSync } from "fs";
 import path from "path";
-import { sendToWebhook } from "./sendWebhook.js";
+import { sendToWebhook } from "../utils/sendWebhook.js"; // fixed path
 
 export default async function handler(req, res) {
   try {
-    const filePath = path.join(process.cwd(), "stickers.txt");
-    const raw = readFileSync(filePath, "utf8");
+    // Read stickers.txt from root
+    let raw = "";
+    try {
+      raw = readFileSync(path.join(process.cwd(), "stickers.txt"), "utf8");
+    } catch (e) {
+      console.error("Could not read stickers.txt:", e);
+      res.status(500).send("Error reading stickers.txt");
+      return;
+    }
 
     const links = raw.split(",").map(x => x.trim()).filter(Boolean);
     if (!links.length) {
@@ -13,7 +20,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Random sticker
     const random = links[Math.floor(Math.random() * links.length)];
 
     // Send to webhook
@@ -21,7 +27,7 @@ export default async function handler(req, res) {
 
     // Return HTML
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.write(`
+    res.end(`
       <!DOCTYPE html>
       <html>
         <head>
@@ -33,20 +39,14 @@ export default async function handler(req, res) {
           </style>
         </head>
         <body>
-          <button id="surveyBtn">Take Femboy Survey</button>
-          <img id="sticker" src="${random}" alt="Sticker of the Day">
-          <script>
-            document.getElementById("surveyBtn").onclick = () => {
-              window.location.href = "/survey.html";
-            };
-          </script>
+          <button id="surveyBtn" onclick="window.location.href='/survey.html'">Take Femboy Survey</button>
+          <img src="${random}" alt="Sticker of the Day">
         </body>
       </html>
     `);
-    res.end();
 
   } catch (err) {
     console.error("API ERROR:", err);
-    res.status(500).send("Error loading sticker");
+    res.status(500).send("Internal server error");
   }
 }
