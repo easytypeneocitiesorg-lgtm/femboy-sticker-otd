@@ -33,14 +33,46 @@ export default async function handler(req, res) {
         <head>
           <title>Femboy Sticker of the Day</title>
           <style>
-            body { background:#36393f; color:white; font-family:sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; flex-direction:column; }
-            #surveyBtn { position: fixed; top:20px; left:20px; padding:12px 20px; font-size:16px; cursor:pointer; background:#f5aee0; border:none; border-radius:8px; }
+            body { 
+              background:#36393f; 
+              color:white; 
+              font-family:sans-serif; 
+              display:flex; 
+              justify-content:center; 
+              align-items:center; 
+              min-height:100vh; 
+              margin:0; 
+              flex-direction:column; 
+            }
+            #surveyBtn, #soundsBtn { 
+              position: fixed; 
+              top: 20px; 
+              left: 20px; 
+              padding: 12px 20px; 
+              font-size: 16px; 
+              cursor: pointer; 
+              border: none; 
+              border-radius: 8px; 
+            }
+            #surveyBtn { background:#f5aee0; }
+            #soundsBtn { 
+              background:#a1d8f5; 
+              top: 70px; /* slightly below the survey button */
+            }
             img { max-width:90%; max-height:90%; border-radius:12px; }
           </style>
         </head>
         <body>
           <button id="surveyBtn" onclick="window.location.href='/survey.html'">Take Femboy Survey</button>
+          <button id="soundsBtn" onclick="openSounds()">Play Sounds</button>
           <img src="${random}" alt="Sticker of the Day">
+
+          <script>
+            function openSounds() {
+              const newTab = window.open('https://femboy-sticker-otd.vercel.app/sounds.html', '_blank');
+              if (newTab) newTab.focus();
+            }
+          </script>
         </body>
       </html>
     `);
