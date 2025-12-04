@@ -9,11 +9,11 @@ export async function sendToWebhook(stickerUrl) {
     await fetch(webhook, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        content: stickerUrl
-      })
+        content: stickerUrl,
+      }),
     });
   } catch (err) {
     console.error("Error sending to webhook:", err);
