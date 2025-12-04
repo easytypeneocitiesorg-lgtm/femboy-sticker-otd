@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         <head>
           <title>Femboy Sticker of the Day</title>
         </head>
-        <body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#fdf6ff;">
+        <body style="display:flex;justify-content:center;align-items:center;height:100vh;background:#36393f;">
           <img src="${random}" alt="Sticker of the Day" style="max-width:90%; max-height:90%; border-radius:12px;">
         </body>
       </html>
