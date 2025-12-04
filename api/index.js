@@ -32,6 +32,7 @@ export default async function handler(req, res) {
       <html>
         <head>
           <title>Femboy Sticker of the Day</title>
+          <link rel="icon" href="https://cdn.discordapp.com/emojis/1406933350140215346.png?size=160" type="image/png">
           <style>
             body { 
               background:#36393f; 
