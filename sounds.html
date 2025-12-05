@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>Calming Sounds</title>
-    <link rel="icon" href="https://cdn.discordapp.com/emojis/1406933350140215346.png?size=160" type="image/png">
+<link rel="icon" href="https://cdn.discordapp.com/emojis/1406933350140215346.png?size=160" type="image/png">
 <style>
     body {
         background: #ffe6f7;
@@ -32,6 +32,10 @@
         background: #ffc8ef;
         transform: scale(1.04);
     }
+    #volumeSlider {
+        width: 250px;
+        margin: 20px auto;
+    }
 </style>
 </head>
 <body>
@@ -42,6 +46,8 @@
 <button class="btn" onclick="toggleSound('ocean')">Ocean Waves</button>
 <button class="btn" onclick="toggleSound('fire')">Fireplace</button>
 <button class="btn" onclick="toggleSound('thunder')">Thunder</button>
+
+<input type="range" id="volumeSlider" min="0" max="100" value="50">
 
 <button class="btn" onclick="stopAll()">Stop All</button>
 
@@ -57,6 +63,7 @@ const sounds = {
 /* loop all sounds */
 for (let key in sounds) {
     sounds[key].loop = true;
+    sounds[key].volume = 0.5; // start at 50%
 }
 
 let playing = null;
@@ -66,13 +73,13 @@ function toggleSound(name) {
         sounds[name].pause();
         sounds[name].currentTime = 0;
         playing = null;
-        document.title = "Calming Sounds"; // reset tab title
+        document.title = "Calming Sounds";
         return;
     }
     stopAll();
     sounds[name].play();
     playing = name;
-    document.title = capitalize(name) + " Sounds"; // set tab title dynamically
+    document.title = capitalize(name) + " Sounds";
 }
 
 function stopAll() {
@@ -88,6 +95,15 @@ function stopAll() {
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+/* --- Volume slider --- */
+const slider = document.getElementById('volumeSlider');
+slider.addEventListener('input', () => {
+    const volume = slider.value / 100; // convert 0-100 to 0-1
+    for (let key in sounds) {
+        sounds[key].volume = volume;
+    }
+});
 </script>
 
 </body>
