@@ -32,9 +32,12 @@
         background: #ffc8ef;
         transform: scale(1.04);
     }
+    #volumeContainer {
+        margin-top: 20px;
+        text-align: center;
+    }
     #volumeSlider {
         width: 250px;
-        margin: 20px auto;
     }
 </style>
 </head>
@@ -47,9 +50,13 @@
 <button class="btn" onclick="toggleSound('fire')">Fireplace</button>
 <button class="btn" onclick="toggleSound('thunder')">Thunder</button>
 
-<input type="range" id="volumeSlider" min="0" max="100" value="50">
-
 <button class="btn" onclick="stopAll()">Stop All</button>
+
+<div id="volumeContainer">
+    <label for="volumeSlider">Volume Slider</label><br>
+    <input type="range" id="volumeSlider" min="25" max="100" value="25">
+    <span id="volumeValue">100%</span>
+</div>
 
 <script>
 /* --- Audio files in /audio folder --- */
@@ -63,7 +70,7 @@ const sounds = {
 /* loop all sounds */
 for (let key in sounds) {
     sounds[key].loop = true;
-    sounds[key].volume = 0.5; // start at 50%
+    sounds[key].volume = 1; // base 100%
 }
 
 let playing = null;
@@ -98,10 +105,15 @@ function capitalize(str) {
 
 /* --- Volume slider --- */
 const slider = document.getElementById('volumeSlider');
+const volumeDisplay = document.getElementById('volumeValue');
+
 slider.addEventListener('input', () => {
-    const volume = slider.value / 100; // convert 0-100 to 0-1
+    // Slider min = 25 (visual start) = 100% volume
+    // Map 25–100 slider to 1–(max multiplier)
+    const multiplier = slider.value / 25; // 25 → 1, 100 → 4
+    volumeDisplay.textContent = Math.round(multiplier * 100) + "%";
     for (let key in sounds) {
-        sounds[key].volume = volume;
+        sounds[key].volume = multiplier; // adjust volume multiplier
     }
 });
 </script>
