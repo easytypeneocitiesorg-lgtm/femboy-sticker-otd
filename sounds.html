@@ -59,63 +59,87 @@
 </div>
 
 <script>
-/* --- Audio files in /audio folder --- */
-const sounds = {
-    rain: new Audio("/audio/rain.wav"),
-    ocean: new Audio("/audio/ocean.wav"),
-    fire: new Audio("/audio/fire.wav"),
-    thunder: new Audio("/audio/thunder.wav")
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const audioFiles = {
+    rain: "/audio/rain.wav",
+    ocean: "/audio/ocean.wav",
+    fire: "/audio/fire.wav",
+    thunder: "/audio/thunder.wav"
 };
 
-/* loop all sounds */
-for (let key in sounds) {
-    sounds[key].loop = true;
-    sounds[key].volume = 1; // base 100%
-}
+const sounds = {};
+const gainNodes = {};
+let buffersLoaded = false;
 
-let playing = null;
+// Load audio files into buffers
+const loadAllBuffers = async () => {
+    for (let key in audioFiles) {
+        const response = await fetch(audioFiles[key]);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
-function toggleSound(name) {
-    if (playing === name) {
-        sounds[name].pause();
-        sounds[name].currentTime = 0;
-        playing = null;
-        document.title = "Calming Sounds";
-        return;
+        // create a gain node for each sound
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 1; // base volume
+        gainNode.connect(audioCtx.destination);
+
+        gainNodes[key] = gainNode;
+
+        sounds[key] = {
+            buffer: audioBuffer,
+            source: null
+        };
     }
+    buffersLoaded = true;
+};
+
+// Play sound
+function toggleSound(name) {
+    if (!buffersLoaded) return;
     stopAll();
-    sounds[name].play();
-    playing = name;
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = sounds[name].buffer;
+    source.loop = true;
+    source.connect(gainNodes[name]);
+    source.start(0);
+    sounds[name].source = source;
+
     document.title = capitalize(name) + " Sounds";
 }
 
+// Stop all sounds
 function stopAll() {
     for (let key in sounds) {
-        sounds[key].pause();
-        sounds[key].currentTime = 0;
+        if (sounds[key].source) {
+            sounds[key].source.stop();
+            sounds[key].source.disconnect();
+            sounds[key].source = null;
+        }
     }
-    playing = null;
     document.title = "Calming Sounds";
 }
 
-// helper to capitalize first letter
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/* --- Volume slider --- */
+// Volume slider
 const slider = document.getElementById('volumeSlider');
 const volumeDisplay = document.getElementById('volumeValue');
 
 slider.addEventListener('input', () => {
-    // Slider min = 25 (visual start) = 100% volume
-    // Map 25–100 slider to 1–(max multiplier)
-    const multiplier = slider.value / 25; // 25 → 1, 100 → 4
+    const multiplier = slider.value / 25; // 25 = 1x, 100 = 4x
     volumeDisplay.textContent = Math.round(multiplier * 100) + "%";
-    for (let key in sounds) {
-        sounds[key].volume = multiplier; // adjust volume multiplier
+
+    for (let key in gainNodes) {
+        gainNodes[key].gain.value = multiplier;
     }
 });
+
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Initialize
+loadAllBuffers();
 </script>
 
 </body>
