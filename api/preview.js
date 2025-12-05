@@ -3,13 +3,36 @@ import path from "path";
 
 export default function handler(req, res) {
   try {
-    // Path to stickers.txt
-    const filePath = path.join(process.cwd(), "stickers.txt");
+    // read mood from query (?mood=blush)
+    const mood = req.query.mood ? req.query.mood.toLowerCase() : null;
 
-    // Read file fresh on each request
-    const text = readFileSync(filePath, "utf8");
+    // decide which file to load
+    // if mood is provided → stickers_mood.txt
+    // otherwise → stickers.txt
+    const fileName = mood ? `stickers_${mood}.txt` : "stickers.txt";
+    const filePath = path.join(process.cwd(), fileName);
 
-    // Split by comma, trim whitespace, remove empty entries
+    let text = "";
+
+    try {
+      text = readFileSync(filePath, "utf8");
+    } catch (err) {
+      // mood doesn't exist → fallback to normal stickers.txt
+      if (mood) {
+        const fallbackPath = path.join(process.cwd(), "stickers.txt");
+        try {
+          text = readFileSync(fallbackPath, "utf8");
+        } catch (e) {
+          res.status(500).send("Error reading sticker files");
+          return;
+        }
+      } else {
+        res.status(500).send("Error reading stickers.txt");
+        return;
+      }
+    }
+
+    // Split the chosen file into URLs
     const links = text
       .split(",")
       .map(x => x.trim())
@@ -20,21 +43,20 @@ export default function handler(req, res) {
       return;
     }
 
-    // Pick a random sticker each request
-    const randomIndex = Math.floor(Math.random() * links.length);
-    const random = links[randomIndex];
+    // Pick a random sticker
+    const random = links[Math.floor(Math.random() * links.length)];
 
-    // Disable caching to avoid same redirect showing repeatedly
+    // prevent Discord from caching same redirect
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
-    // Redirect to the chosen sticker
+    // redirect to the sticker URL
     res.writeHead(302, { Location: random });
     res.end();
 
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error reading stickers.txt");
+    res.status(500).send("Internal error");
   }
 }
